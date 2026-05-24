@@ -11,6 +11,10 @@ import { useTMDB } from './hooks/useTMDB';
 import { getOfflineRecommendations, OFFLINE_CATALOG } from './utils/recommender';
 import { parseWatchHistory } from './utils/csvParser';
 
+import { auth, db, isFirebaseEnabled } from './utils/firebase';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+
 export default function App() {
   // -------------------------------------------------------------
   // MULTI-PROFILE PERSISTENCE LAYER
@@ -69,6 +73,9 @@ export default function App() {
   // Hook for live TMDB
   const { loading: apiLoading, error: apiError, searchTitles, getLiveRecommendations, validateAPIKey } = useTMDB();
 
+  const [currentUser, setCurrentUser] = useState(null);
+  const [isCloudSyncing, setIsCloudSyncing] = useState(false);
+
   // -------------------------------------------------------------
   // SYNCHRONIZATION ALGORITHMS
   // -------------------------------------------------------------
@@ -77,6 +84,75 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem('watchmatch_tmdb_key', tmdbKey);
   }, [tmdbKey]);
+
+  // -------------------------------------------------------------
+  // CLOUD AUTHENTICATION & PROFILE RECOVERY (FIREBASE)
+  // -------------------------------------------------------------
+  useEffect(() => {
+    if (isFirebaseEnabled && auth) {
+      const unsubscribe = onAuthStateChanged(auth, async (user) => {
+        setCurrentUser(user);
+        if (user) {
+          setIsCloudSyncing(true);
+          try {
+            const userDocRef = doc(db, 'users', user.uid);
+            const userDocSnap = await getDoc(userDocRef);
+            if (userDocSnap.exists()) {
+              const data = userDocSnap.data();
+              if (data.profiles && data.profiles.length > 0) {
+                setProfiles(data.profiles);
+              }
+              if (data.activeProfileId) {
+                setActiveProfileId(data.activeProfileId);
+              }
+              if (data.tmdbKey) {
+                setTmdbKey(data.tmdbKey);
+              }
+            } else {
+              // Migrate local guest progress to their new cloud account!
+              const savedProfiles = localStorage.getItem('watchmatch_profiles_v3');
+              const localProfiles = savedProfiles ? JSON.parse(savedProfiles) : [];
+              const savedActiveId = localStorage.getItem('watchmatch_active_profile_id') || '';
+              const savedKey = localStorage.getItem('watchmatch_tmdb_key') || '';
+              
+              await setDoc(userDocRef, {
+                profiles: localProfiles,
+                activeProfileId: savedActiveId,
+                tmdbKey: savedKey,
+                updatedAt: new Date().toISOString()
+              });
+            }
+          } catch (err) {
+            console.error("Cloud database recovery failed:", err);
+          } finally {
+            setIsCloudSyncing(false);
+          }
+        }
+      });
+      return () => unsubscribe();
+    }
+  }, []);
+
+  // Debounced Auto-Sync back to Cloud database on changes
+  useEffect(() => {
+    if (isFirebaseEnabled && db && currentUser) {
+      const delaySync = setTimeout(async () => {
+        try {
+          const userDocRef = doc(db, 'users', currentUser.uid);
+          await setDoc(userDocRef, {
+            profiles,
+            activeProfileId,
+            tmdbKey,
+            updatedAt: new Date().toISOString()
+          }, { merge: true });
+          console.log("State synced to Cloud.");
+        } catch (err) {
+          console.error("Cloud auto-sync failed:", err);
+        }
+      }, 1000);
+      return () => clearTimeout(delaySync);
+    }
+  }, [profiles, activeProfileId, tmdbKey, currentUser]);
 
   // Handle active profile switching
   useEffect(() => {
@@ -347,9 +423,24 @@ export default function App() {
     setShowProfilePicker(false);
   };
 
-  const handleLogOut = () => {
+  const handleLogOut = async () => {
     setIsProfileOpen(false);
     setShowProfilePicker(true);
+    if (isFirebaseEnabled && auth) {
+      try {
+        await signOut(auth);
+        localStorage.removeItem('watchmatch_user_email');
+        setProfiles([]);
+        setActiveProfileId('');
+        setTmdbKey('');
+        setIsOnboarded(false);
+        setTriageConfig(null);
+        setRecommendations(null);
+        setActiveHero(null);
+      } catch (err) {
+        console.error("Sign out error:", err);
+      }
+    }
   };
 
   // -------------------------------------------------------------
@@ -619,7 +710,8 @@ export default function App() {
             tmdbKey ? 'bg-[#34c759]/10 text-[#34c759] border border-[#34c759]/20' : 'bg-white/5 text-slate-400 border border-white/10'
           }`} style={{ letterSpacing: '1px' }}>
             <span className={`w-1.5 h-1.5 rounded-full ${tmdbKey ? 'bg-[#34c759] animate-pulse' : 'bg-slate-400'}`}></span>
-            {tmdbKey ? "Live TMDB Mode" : "Offline Mode"}
+            <span className="hidden-xs">{tmdbKey ? "Live TMDB Mode" : "Offline Mode"}</span>
+            <span className="visible-xs">{tmdbKey ? "Live" : "Offline"}</span>
           </span>
         </div>
         

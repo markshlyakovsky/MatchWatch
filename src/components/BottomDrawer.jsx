@@ -39,7 +39,8 @@ export default function BottomDrawer({
         <div className="flex items-center gap-2">
           <Sparkles className="icon-orange animate-pulse" size={16} />
           <span className="text-xs font-bold uppercase tracking-widest text-slate-300">
-            {isOpen ? "Hide Backup Squad" : "Show Backup Squad (5 Thematic Archetypes)"}
+            <span className="hidden-xs">{isOpen ? "Hide Backup Squad" : "Show Backup Squad (5 Thematic Archetypes)"}</span>
+            <span className="visible-xs">{isOpen ? "Hide Squad" : "Backup Squad (5 Alternatives)"}</span>
           </span>
         </div>
         <div className="flex items-center gap-4">

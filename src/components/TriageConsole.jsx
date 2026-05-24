@@ -148,13 +148,14 @@ export default function TriageConsole({
               <p className="pane-subtitle">Walk through our quick interactive questionnaire to instantly slice our databases to your exact mood.</p>
               
               <div className="flex flex-col gap-4 mt-6">
-                
-                {/* Option A card */}
+                                {/* Option A card */}
                 <div className="triage-option-card option-a group" onClick={handleOptionA}>
                   <div className="text-left flex-1 pr-4">
-                    <span className="text-xs uppercase tracking-wider text-orange font-bold block mb-1">Option A</span>
+                    <div className="inline-flex items-center gap-1 text-[9px] bg-orange/10 border border-orange/20 text-orange font-extrabold px-2 py-0.5 rounded uppercase tracking-wider mb-2" style={{ backgroundColor: 'rgba(255, 90, 54, 0.12)', borderColor: 'rgba(255, 90, 54, 0.25)', color: '#ff5a36' }}>
+                      🚀 Instant Match
+                    </div>
                     <h3 className="font-extrabold text-white text-base">"I'm up for anything"</h3>
-                    <p className="text-xs text-slate-400 mt-1 leading-normal">Skip filters and display the absolute best algorithmic match based on all history and profile data uploaded so far.</p>
+                    <p className="text-xs text-slate-400 mt-1 leading-normal">Skip filters and discover the absolute best match based on your interests and viewing history.</p>
                   </div>
                   <ArrowRight size={18} className="text-slate-500 group-hover:text-orange transform transition-transform group-hover:translate-x-1" />
                 </div>
@@ -162,9 +163,11 @@ export default function TriageConsole({
                 {/* Option B card */}
                 <div className="triage-option-card option-b group" onClick={() => setStep('categories')}>
                   <div className="text-left flex-1 pr-4">
-                    <span className="text-xs uppercase tracking-wider text-[#007aff] font-bold block mb-1">Option B</span>
-                    <h3 className="font-extrabold text-white text-base">"Specific Category or Categories"</h3>
-                    <p className="text-xs text-slate-400 mt-1 leading-normal">Pick 1 to 5 genres you want to watch. Filter candidates that match them perfectly, or generate a mixed selection box.</p>
+                    <div className="inline-flex items-center gap-1 text-[9px] bg-[#007aff]/10 border border-[#007aff]/20 text-[#007aff] font-extrabold px-2 py-0.5 rounded uppercase tracking-wider mb-2" style={{ backgroundColor: 'rgba(0, 122, 255, 0.12)', borderColor: 'rgba(0, 122, 255, 0.25)', color: '#007aff' }}>
+                      🎯 Targeted Filter
+                    </div>
+                    <h3 className="font-extrabold text-white text-base">"Specific Categories"</h3>
+                    <p className="text-xs text-slate-400 mt-1 leading-normal">Select exactly which genres you are in the mood for. Filter results to match your pick perfectly.</p>
                   </div>
                   <ArrowRight size={18} className="text-slate-500 group-hover:text-[#007aff] transform transition-transform group-hover:translate-x-1" />
                 </div>
@@ -172,9 +175,11 @@ export default function TriageConsole({
                 {/* Option C card */}
                 <div className="triage-option-card option-c group" onClick={() => setStep('mood-anchors')}>
                   <div className="text-left flex-1 pr-4">
-                    <span className="text-xs uppercase tracking-wider text-violet-400 font-bold block mb-1">Option C</span>
-                    <h3 className="font-extrabold text-white text-base">"I have a mood, just not sure what to watch"</h3>
-                    <p className="text-xs text-slate-400 mt-1 leading-normal">Pick 2 or more titles you enjoyed from your history logs to seed matching algorithms, content format ratios, and pacing.</p>
+                    <div className="inline-flex items-center gap-1 text-[9px] bg-violet-400/10 border border-violet-400/20 text-violet-400 font-extrabold px-2 py-0.5 rounded uppercase tracking-wider mb-2" style={{ backgroundColor: 'rgba(175, 82, 222, 0.12)', borderColor: 'rgba(175, 82, 222, 0.25)', color: '#af52de' }}>
+                      🔮 Thematic Mood Seed
+                    </div>
+                    <h3 className="font-extrabold text-white text-base">"Match My Current Mood"</h3>
+                    <p className="text-xs text-slate-400 mt-1 leading-normal">Choose 2+ titles you loved to calibrate exact storytelling styles, pacing, and vibe similarity.</p>
                   </div>
                   <ArrowRight size={18} className="text-slate-500 group-hover:text-violet-400 transform transition-transform group-hover:translate-x-1" />
                 </div>

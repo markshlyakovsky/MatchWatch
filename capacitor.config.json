@@ -1,0 +1,12 @@
+{
+  "appId": "io.watchmatch.app",
+  "appName": "WatchMatch",
+  "webDir": "dist",
+  "plugins": {
+    "GoogleAuth": {
+      "scopes": ["profile", "email"],
+      "clientId": "191494258983-7hofskgfnrq6t0gtarkdcjun11u8v4s8.apps.googleusercontent.com",
+      "forceCodeForRefreshToken": true
+    }
+  }
+}

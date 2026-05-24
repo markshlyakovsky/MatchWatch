@@ -33,6 +33,12 @@
   padding: 0;
 }
 
+html, body {
+  overflow-x: hidden;
+  max-width: 100%;
+  width: 100%;
+}
+
 body {
   font-family: var(--font-primary);
   background-color: var(--bg-obsidian);
@@ -90,8 +96,11 @@ body {
 .app-container {
   min-height: 100vh;
   display: flex;
-  flex-col: column;
+  flex-direction: column;
   padding-bottom: 70px; /* space for drawer */
+  max-width: 100%;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 .navbar {
@@ -801,12 +810,15 @@ body {
 }
 
 .drawer-cards-scroll {
+  display: flex !important;
+  overflow-x: auto !important;
   scroll-behavior: smooth;
   scrollbar-width: none;
+  -webkit-overflow-scrolling: touch !important;
 }
 
 .drawer-cards-scroll::-webkit-scrollbar {
-  display: none;
+  display: none !important;
 }
 
 .drawer-card {
@@ -1313,6 +1325,174 @@ body {
   box-shadow: 0 0 25px rgba(175, 82, 222, 0.12) !important;
   transform: translateY(-2px);
 }
+
+.visible-xs {
+  display: none !important;
+}
+
+@media (max-width: 600px) {
+  .navbar {
+    padding: 0.75rem 1rem !important;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .logo-container {
+    font-size: 1rem !important;
+    gap: 0.35rem !important;
+  }
+  .logo-icon {
+    font-size: 1.2rem !important;
+  }
+  .nav-actions {
+    gap: 0.4rem !important;
+  }
+  .btn-icon {
+    width: 32px !important;
+    height: 32px !important;
+  }
+  .btn-icon svg {
+    width: 14px !important;
+    height: 14px !important;
+  }
+  .user-avatar-circle {
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 0.85rem !important;
+  }
+  .drawer-trigger {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  /* Onboarding optimizations */
+  .onboarding-container {
+    margin: 1rem auto !important;
+    padding: 0 0.75rem !important;
+  }
+  .onboarding-grid {
+    gap: 1.5rem !important;
+  }
+  .onboarding-card {
+    padding: 1.25rem !important;
+    min-height: auto !important;
+  }
+  .branding-visual {
+    padding: 1.25rem 1rem !important;
+  }
+  .branding-visual .flex {
+    flex-direction: column !important;
+    gap: 1rem !important;
+  }
+  .branding-step-item {
+    border-left: none !important;
+    padding-left: 0 !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 0.75rem;
+  }
+  .branding-step-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  /* Modal optimizations */
+  .modal-overlay {
+    padding: 0.5rem !important;
+  }
+  .modal-container {
+    max-width: 100% !important;
+    border-radius: var(--border-radius-md) !important;
+  }
+  .modal-body {
+    padding: 1rem !important;
+    max-height: 80vh !important;
+  }
+
+  /* Triage Console option cards */
+  .triage-option-card {
+    padding: 1rem 1.15rem !important;
+    margin-bottom: 0.75rem !important;
+    border-radius: 10px !important;
+  }
+  .triage-option-card h3 {
+    font-size: 0.95rem !important;
+  }
+  .triage-option-card p {
+    font-size: 0.7rem !important;
+  }
+
+  /* alternatives bottom drawer */
+  .drawer-card {
+    width: 200px !important;
+  }
+
+  /* Cinematic hero optimizations */
+  .hero-card-container {
+    height: calc(100vh - 180px) !important;
+    max-height: 520px !important;
+    min-height: 400px !important;
+  }
+  .hero-card-empty {
+    height: calc(100vh - 180px) !important;
+    max-height: 520px !important;
+    min-height: 400px !important;
+    padding: 1.5rem !important;
+  }
+  .hero-meta {
+    gap: 0.5rem 0.75rem !important;
+  }
+  .action-icon-btn {
+    padding: 0.65rem 1.15rem !important;
+    font-size: 0.8rem !important;
+  }
+  .btn-trailer-trigger {
+    padding: 0.5rem 1.15rem 0.5rem 0.5rem !important;
+  }
+
+  /* Autocomplete log overlay limit */
+  .search-autocomplete {
+    max-height: 160px !important;
+  }
+}
+
+.video-modal-container {
+  width: 90%;
+  max-width: 800px;
+  position: relative;
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.95);
+  background: var(--bg-obsidian);
+}
+
+@media (max-width: 600px) {
+  .video-modal-container {
+    width: 96vw !important;
+    border-radius: var(--border-radius-md) !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .hidden-xs {
+    display: none !important;
+  }
+  .visible-xs {
+    display: inline-flex !important;
+  }
+  .profile-dropdown {
+    right: 1rem !important;
+    left: 1rem !important;
+    width: auto !important;
+    max-width: calc(100% - 2rem) !important;
+    top: 64px !important;
+  }
+  .meta-separator {
+    display: none !important;
+  }
+  .hero-meta {
+    font-size: 0.7rem !important;
+  }
+}
+
 
 
 
