@@ -18,33 +18,11 @@ export default function App() {
   const [profiles, setProfiles] = useState(() => {
     const saved = localStorage.getItem('watchmatch_profiles_v3');
     if (saved) return JSON.parse(saved);
-    // Seed default profiles on initial launch
-    return [
-      {
-        id: 'profile-1',
-        name: 'fifam',
-        avatarBg: 'linear-gradient(135deg, #ff5a36, #ff3b30)',
-        watchHistory: [],
-        anchors: [],
-        dnaSelection: {},
-        selectedPlatforms: ['Netflix', 'Prime', 'Disney+'],
-        region: 'US'
-      },
-      {
-        id: 'profile-2',
-        name: 'Kids & Family',
-        avatarBg: 'linear-gradient(135deg, #34c759, #4cd964)',
-        watchHistory: [],
-        anchors: [],
-        dnaSelection: {},
-        selectedPlatforms: ['Netflix', 'Disney+'],
-        region: 'US'
-      }
-    ];
+    return []; // Return empty list for brand-new users
   });
 
   const [activeProfileId, setActiveProfileId] = useState(() => {
-    return localStorage.getItem('watchmatch_active_profile_id') || 'profile-1';
+    return localStorage.getItem('watchmatch_active_profile_id') || '';
   });
 
   const [showProfilePicker, setShowProfilePicker] = useState(true);
@@ -53,7 +31,16 @@ export default function App() {
   // -------------------------------------------------------------
   // ACTIVE PROFILE BINDINGS (Drawn from profiles state array)
   // -------------------------------------------------------------
-  const activeProfile = profiles.find(p => p.id === activeProfileId) || profiles[0];
+  const activeProfile = profiles.find(p => p.id === activeProfileId) || profiles[0] || {
+    id: '',
+    name: 'Guest',
+    avatarBg: 'linear-gradient(135deg, #8e8e93, #8e8e93)',
+    watchHistory: [],
+    anchors: [],
+    dnaSelection: {},
+    selectedPlatforms: ['Netflix', 'Prime', 'Disney+'],
+    region: 'US'
+  };
 
   // Primary active states
   const [watchHistory, setWatchHistory] = useState(activeProfile.watchHistory);
@@ -331,20 +318,25 @@ export default function App() {
     setProfiles(nextProfiles);
     localStorage.setItem('watchmatch_profiles_v3', JSON.stringify(nextProfiles));
     setNewProfileName('');
+    
+    // Automatically select the profile if it is the first one created!
+    if (profiles.length === 0) {
+      setActiveProfileId(newProfile.id);
+      setShowProfilePicker(false);
+    }
   };
 
   const handleDeleteProfile = (id, e) => {
     e.stopPropagation(); // Prevent switching profile context
-    if (profiles.length <= 1) {
-      alert("You must retain at least one profile inside the user manager.");
-      return;
-    }
     if (window.confirm("Are you sure you want to delete this profile? All viewing history and custom tags will be permanently removed.")) {
       const nextProfiles = profiles.filter(p => p.id !== id);
       setProfiles(nextProfiles);
       localStorage.setItem('watchmatch_profiles_v3', JSON.stringify(nextProfiles));
       
-      if (activeProfileId === id) {
+      if (nextProfiles.length === 0) {
+        setActiveProfileId('');
+        setShowProfilePicker(true);
+      } else if (activeProfileId === id) {
         setActiveProfileId(nextProfiles[0].id);
       }
     }
@@ -571,16 +563,14 @@ export default function App() {
                 </span>
 
                 {/* Clean Delete Action Underneath (Hover-to-reveal) */}
-                {profiles.length > 1 && (
-                  <button 
-                    className="delete-profile-underneath mt-2 text-[10px] text-red uppercase tracking-wider font-bold opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 hover:underline focus:outline-none"
-                    onClick={(e) => handleDeleteProfile(p.id, e)}
-                    title={`Delete profile ${p.name}`}
-                  >
-                    <Trash2 size={10} />
-                    Delete
-                  </button>
-                )}
+                <button 
+                  className="delete-profile-underneath mt-2 text-[10px] text-red uppercase tracking-wider font-bold opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 hover:underline focus:outline-none"
+                  onClick={(e) => handleDeleteProfile(p.id, e)}
+                  title={`Delete profile ${p.name}`}
+                >
+                  <Trash2 size={10} />
+                  Delete
+                </button>
               </div>
             ))}
 
