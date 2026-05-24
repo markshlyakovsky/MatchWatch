@@ -22,3 +22,11 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Security and Credentials
+.env
+.env.*
+google-services.json
+GoogleService-Info.plist
+*.keystore
+*.jks
